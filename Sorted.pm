@@ -3,7 +3,7 @@ use base 'Tie::Array';
 use 5.006;
 use strict;
 use warnings;
-our $VERSION = '1.0';
+our $VERSION = '1.1';
 
 =head1 NAME
 
@@ -12,7 +12,7 @@ Tie::Array::Sorted - An array which is kept sorted
 =head1 SYNOPSIS
 
   use Tie::Array::Sorted;
-  tie @a, "Tie::Array::Sorted";
+  tie @a, "Tie::Array::Sorted", sub { $_[0] <=> $_[1] };
   push @a, 10, 4, 7, 3, 4;
   print "@a"; # "3 4 4 7 10"
 
@@ -26,10 +26,16 @@ Direct stores (C<$a[10] = "wibble">) effectively splice out the original
 value and insert the new element. It's not clear why you'd want to use
 direct stores like that, but this module does the right thing if you do.
 
-If you don't like the ordinary numeric comparator, you can provide your
-own; it should compare the two elements it is given:
+If you don't like the ordinary lexical comparator, you can provide your
+own; it should compare the two elements it is given. For instance, a
+numeric comparator would look like this:
 
-    tie @a, "tie::Array::Sorted", sub { $_[0] cmp $_[1] }
+    tie @a, "tie::Array::Sorted", sub { $_[0] <=> $_[1] }
+
+Whereas to compare a list of files by their sizes, you'd so something
+like:
+
+    tie @a, "tie::Array::Sorted", sub { -s $_[0] <=> -s $_[1] }
 
 =cut
 
@@ -37,7 +43,7 @@ sub TIEARRAY  {
     my ($class, $comparator) = @_;
     bless {
         array => [],
-        comp  => (defined $comparator ? $comparator : sub { $_[0] <=> $_[1] })
+        comp  => (defined $comparator ? $comparator : sub { $_[0] cmp $_[1] })
     }, $class;
 }
 
