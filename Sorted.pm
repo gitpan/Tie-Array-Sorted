@@ -3,7 +3,7 @@ use base 'Tie::Array';
 use 5.006;
 use strict;
 use warnings;
-our $VERSION = '1.1';
+our $VERSION = '1.2';
 
 =head1 NAME
 
@@ -30,12 +30,23 @@ If you don't like the ordinary lexical comparator, you can provide your
 own; it should compare the two elements it is given. For instance, a
 numeric comparator would look like this:
 
-    tie @a, "tie::Array::Sorted", sub { $_[0] <=> $_[1] }
+    tie @a, "Tie::Array::Sorted", sub { $_[0] <=> $_[1] }
 
 Whereas to compare a list of files by their sizes, you'd so something
 like:
 
-    tie @a, "tie::Array::Sorted", sub { -s $_[0] <=> -s $_[1] }
+    tie @a, "Tie::Array::Sorted", sub { -s $_[0] <=> -s $_[1] }
+
+=head1 LAZY SORTING
+
+You may find, after profiling your code, that you do far more stores
+than fetches. In this case, doing a sorted insertion is inefficient, and
+you only need to sort on retrieval. You can turn on lazy sorting by
+tying to the C<Tie::Array::Sorted::Lazy> subclass, which does the
+right thing. Naturally, it only re-sorts if data has been added since
+the last sort.
+
+    tie @a, "Tie::Array::Sorted::Lazy", sub { -s $_[0] <=> -s $_[1] };
 
 =cut
 
@@ -83,15 +94,41 @@ sub SHIFT     { shift(@{$_[0]->{array}}) }
 sub EXISTS    { exists $_[0]->{array}->[$_[1]] }
 sub DELETE    { delete $_[0]->{array}->[$_[1]] }
 
+package Tie::Array::Sorted::Lazy;
+use base 'Tie::Array::Sorted';
+sub PUSH {
+    my ($self, @elems) = @_;
+    $self->{dirty} = 1;
+    push @{$self->{array}}, @elems;
+}
+sub UNSHIFT {
+    my ($self, @elems) = @_;
+    $self->{dirty} = 1;
+    push @{$self->{array}}, @elems;
+}
+
+sub fixup {
+    my $self = shift;
+    $self->{array} = [sort {$self->{comp}->($a,$b)} @{$self->{array}}];
+    $self->{dirty} = 0;
+}
+
+sub FETCH { $_[0]->fixup if $_[0]->{dirty}; shift->SUPER::FETCH(@_); }
+sub STORESIZE { $_[0]->fixup if $_[0]->{dirty}; shift->SUPER::STORESIZE(@_); }
+sub POP { $_[0]->fixup if $_[0]->{dirty}; shift->SUPER::POP(@_); }
+sub SHIFT { $_[0]->fixup if $_[0]->{dirty}; shift->SUPER::SHIFT(@_); }
+sub EXIST { $_[0]->fixup if $_[0]->{dirty}; shift->SUPER::EXIST(@_); }
+sub DELETE { $_[0]->fixup if $_[0]->{dirty}; shift->SUPER::DELETE(@_); }
+
 1;
 
 =head1 AUTHOR
 
-Simon Cozens, E<lt>simon@kasei.comE<gt>
+Simon Cozens, E<lt>simon@cpan.orgE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2003 by Kasei
+Copyright 2003 by Kasei, 2004 by Simon Cozens
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself. 

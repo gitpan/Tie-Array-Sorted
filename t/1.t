@@ -1,7 +1,9 @@
 use Test::More qw(no_plan);
 use_ok("Tie::Array::Sorted");
-tie @a, "Tie::Array::Sorted", sub { $_[0] <=> $_[1] };
-# Tests look weird because I SUCK.
+for (0..1) {
+my @a;
+tie @a, "Tie::Array::Sorted".($_==1 ? "::Lazy" : ""), sub { $_[0] <=> $_[1] };
+@a = ();
 
 push @a, 10;
 is($a[0], 10, "Stored");
@@ -38,6 +40,7 @@ is(@a, 4, "Pop");
 
 push @a, 4,5,6;
 is("@a", "4 5 5 6 10 10 12", "push");
+}
 
 tie @b, "Tie::Array::Sorted";
 push @b, "beta"; is("@b", "beta", "default comparators");

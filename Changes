@@ -1,5 +1,9 @@
 Revision history for Perl extension Tie::Array::Sorted.
 
+1.2   Wed Mar 24 11:16:25 GMT 2004
+    - Add Lazy subclass
+    - Small doc fixes
+
 1.1   Wed Nov 12 17:28:39 2003
     - Change default sort to lexical
 
