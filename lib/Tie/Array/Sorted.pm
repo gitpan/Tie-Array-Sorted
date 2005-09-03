@@ -7,7 +7,7 @@ use warnings;
 
 use base 'Tie::Array';
 
-our $VERSION = '1.3';
+our $VERSION = '1.4';
 
 =head1 NAME
 
@@ -110,16 +110,18 @@ Current maintainer: Tony Bowden
 Please direct all correspondence regarding this module to:
 	bug-Tie-Array-Sorted@rt.cpan.org
 
-=head1 SEE ALSO
-
-L<Bit::Vector>
-
 =head1 COPYRIGHT AND LICENSE
 
-Copyright 2003, 2004 by Kasei
+  Copyright (C) 2003-2005 Tony Bowden.
 
-This library is free software; you can redistribute it and/or modify
-it under the same terms as Perl itself.
+  This program is free software; you can redistribute it and/or modify it under
+  the terms of the GNU General Public License; either version 2 of the License,
+  or (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful, but WITHOUT
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+  FOR A PARTICULAR PURPOSE.
+
 
 =cut
 

@@ -1,7 +1,9 @@
 Changes
-Makefile.PL
-MANIFEST
 lib/Tie/Array/Sorted.pm
 lib/Tie/Array/Sorted/Lazy.pm
+Makefile.PL
+MANIFEST
+META.yml			Module meta-data (added by MakeMaker)
 t/1.t
-META.yml                                Module meta-data (added by MakeMaker)
+t/pod-coverage.t
+t/pod.t

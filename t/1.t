@@ -1,4 +1,4 @@
-use Test::More tests => 49;
+use Test::More tests => 52;
 
 for $mod ("Tie::Array::Sorted", "Tie::Array::Sorted::Lazy") { 
 	use_ok $mod;
@@ -48,5 +48,17 @@ for $mod ("Tie::Array::Sorted", "Tie::Array::Sorted::Lazy") {
 	push @b, "beta";  is "@b", "beta", "default comparator";
 	push @b, "alpha"; is "@b", "alpha beta", " is text search";
 	push @b, "gamma"; is "@b", "alpha beta gamma", " and it works";
+}
+
+{
+	use Class::Struct OBJ => [ id => '$' ];
+
+	my @list;
+	tie @list, "Tie::Array::Sorted", sub { $_[0]->id <=> $_[1]->id };
+	my @obj = map OBJ->new(id => $_), 1 .. 3;
+	is @list, 0, "Start with empty list";
+	push @list, $_ for reverse @obj;
+	is @list, 3, "3 objects on list";
+	is $list[0]->id, "1", "Starts with 1";
 }
 
