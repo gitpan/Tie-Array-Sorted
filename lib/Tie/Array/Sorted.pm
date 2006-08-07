@@ -7,7 +7,7 @@ use warnings;
 
 use base 'Tie::Array';
 
-our $VERSION = '1.4';
+our $VERSION = '1.41';
 
 =head1 NAME
 
@@ -45,8 +45,8 @@ like:
 
 =head1 LAZY SORTING
 
-If you do more stores than fetches, you may wish to use
-Tie::Array::Sorted::Lazy instead.
+If you do more stores than fetches, you may find
+L<Tie::Array::Sorted::Lazy> more efficient.
 
 =cut
 
@@ -110,9 +110,12 @@ Current maintainer: Tony Bowden
 Please direct all correspondence regarding this module to:
 	bug-Tie-Array-Sorted@rt.cpan.org
 
+This module was originall written as part of the L<Plucene> project.
+However, as Plucene no longer uses this, it is effectively unmaintained.
+
 =head1 COPYRIGHT AND LICENSE
 
-  Copyright (C) 2003-2005 Tony Bowden.
+  Copyright (C) 2003-2006 Simon Cozens and Tony Bowden.
 
   This program is free software; you can redistribute it and/or modify it under
   the terms of the GNU General Public License; either version 2 of the License,
